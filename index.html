@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вычисление Pi методом Монте-Карло</title>
+</head>
+<body>
+    <h1>Вычисление числа Pi методом Монте-Карло</h1>
+    <label for="points">Введите количество точек:</label>
+    <input type="number" id="points" value="10000"><br><br>
+    <label for="precision">Количество знаков после запятой:</label>
+    <input type="number" id="precision" value="2" min="0"><br><br>
+    <button onclick="calculatePi()">Вычислить Pi</button>
+    <p id="result"></p>
+    <p id="pointStats"></p>
+    <canvas id="canvas" width="400" height="400" style="border: 1px solid black;"></canvas>
+    <script>
+        function calculatePi() {
+            const totalPoints = parseInt(document.getElementById('points').value);
+            const precision = parseInt(document.getElementById('precision').value);
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            const radius = canvas.width / 2;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.arc(radius, radius, radius, 0, Math.PI * 2);
+            ctx.stroke();
+
+            let pointsInCircle = 0;
+            let pointsOutCircle = 0;
+
+            for (let i = 0; i < totalPoints; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const dx = x - radius;
+                const dy = y - radius;
+                if (dx * dx + dy * dy <= radius * radius) {
+                    pointsInCircle++;
+                    ctx.fillStyle = 'green';
+                } else {
+                    pointsOutCircle++;
+                    ctx.fillStyle = 'red';
+                }
+                ctx.beginPath();
+                ctx.arc(x, y, 1, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            const piEstimate = 4 * (pointsInCircle / totalPoints);
+            const piFormatted = piEstimate.toFixed(precision);
+            document.getElementById('result').innerText = `Приблизительное значение Pi: ${piFormatted}`;
+            document.getElementById('pointStats').innerText = `Точек в круге: ${pointsInCircle}, Точек вне круга: ${pointsOutCircle}`;
+        }
+    </script>
+</body>
+</html>
